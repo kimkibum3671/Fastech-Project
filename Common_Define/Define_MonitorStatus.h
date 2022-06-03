@@ -1,0 +1,44 @@
+#pragma once
+
+#ifndef FAS_MONITOR_STATUS_CODE
+#define FAS_MONITOR_STATUS_CODE
+
+/**
+* --------------------------------------------------------------------------------
+*                         Monitor Status Code Defines.
+* --------------------------------------------------------------------------------
+*/
+
+typedef enum _FAS_MONITOR_STATUS
+{
+	STATUS_IDLE = 0,
+	STATUS_DISCONNECTED = 0,
+	STATUS_CONNECTING,
+	STATUS_CONNECTED,
+	STATUS_READY,
+	STATUS_SEND_REQUEST,
+	STATUS_WAIT_RESPONSE,
+	STATUS_WAIT,
+}	FAS_MONITOR_STATUS;
+
+typedef enum _FAS_SEQUENCE_STATUS
+{
+	SEQUENCE_GET_INFO = 0,
+	SEQUENCE_GET_STATUS_ALL,
+	SEQUENCE_REBOOT,
+	SEQUENCE_SERVO_ON,
+	SEQUENCE_SET_MODE,
+	SEQUENCE_ORIGIN_FIND,
+	SEQUENCE_STOP,
+	SEQUENCE_READ_PARAM_RAM,
+	SEQUENCE_READ_PARAM_ROM,
+	SEQUENCE_WRITE_PARAM_RAM,
+	SEQUENCE_READ_PT_RAM,
+	SEQUENCE_WRITE_PT_RAM,
+	SEQUENCE_SAVE_PT_ROM,
+	SEQUENCE_LOAD_PT_ROM,
+	SEQUENCE_SAVE_FILE,
+	SEQUENCE_LOAD_FILE,
+} FAS_SEQUENCE_STATUS;
+
+#endif

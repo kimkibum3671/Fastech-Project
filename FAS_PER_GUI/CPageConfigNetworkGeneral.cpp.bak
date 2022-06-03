@@ -1,0 +1,312 @@
+// CPageConfigNetworkGeneral.cpp : implementation file
+//
+
+#include "pch.h"
+#include "FAS_PER_GUI.h"
+#include "CPageConfigNetworkGeneral.h"
+#include "afxdialogex.h"
+
+#include "CDataBaseManager.h"
+
+#include "CDeviceList.h"
+
+// CPageConfigNetworkGeneral dialog
+
+IMPLEMENT_DYNAMIC(CPageConfigNetworkGeneral, CMFCPropertyPage)
+
+CPageConfigNetworkGeneral::CPageConfigNetworkGeneral(CWnd* pParent /*=nullptr*/)
+	: CMFCPropertyPage(IDP_CONFIG_NETWORK_GENERAL)
+{
+
+}
+
+CPageConfigNetworkGeneral::~CPageConfigNetworkGeneral()
+{
+}
+
+void CPageConfigNetworkGeneral::DoDataExchange(CDataExchange* pDX)
+{
+	CMFCPropertyPage::DoDataExchange(pDX);
+}
+
+
+BEGIN_MESSAGE_MAP(CPageConfigNetworkGeneral, CMFCPropertyPage)
+	ON_WM_DESTROY()
+	ON_NOTIFY(LVN_ITEMCHANGED, IDC_LIST_NETWORK, &CPageConfigNetworkGeneral::OnLvnItemchangedListNetwork)
+	ON_NOTIFY(LVN_ENDLABELEDIT, IDC_LIST_NETWORK, &CPageConfigNetworkGeneral::OnLvnEndlabeleditListNetwork)
+	ON_BN_CLICKED(IDC_BTN_ADD, &CPageConfigNetworkGeneral::OnBnClickedBtnAdd)
+	ON_BN_CLICKED(IDC_BTN_MOD, &CPageConfigNetworkGeneral::OnBnClickedBtnMod)
+	ON_BN_CLICKED(IDC_BTN_DEL, &CPageConfigNetworkGeneral::OnBnClickedBtnDel)
+	ON_BN_CLICKED(IDC_BTN_UP, &CPageConfigNetworkGeneral::OnBnClickedBtnUp)
+	ON_BN_CLICKED(IDC_BTN_DOWN, &CPageConfigNetworkGeneral::OnBnClickedBtnDown)
+END_MESSAGE_MAP()
+
+
+// CPageConfigNetworkGeneral message handlers
+
+
+BOOL CPageConfigNetworkGeneral::OnInitDialog()
+{
+	CMFCPropertyPage::OnInitDialog();
+
+	if (1)	// Initialize ListCtrl
+	{
+		m_listCtrl.SubclassDlgItem(IDC_LIST_NETWORK, this);
+		m_listCtrl.ModifyStyle(0, LVS_SINGLESEL);
+		m_listCtrl.SetExtendedStyle(LVS_EX_FULLROWSELECT | LVS_EX_GRIDLINES | LVS_EX_DOUBLEBUFFER);
+		HRESULT result = ::SetWindowTheme(m_listCtrl.m_hWnd, _T("Explorer"), NULL);
+
+		m_listCtrl.InsertColumn(0, _T("IP Address"));
+		m_listCtrl.InsertColumn(1, _T("Device ID"));
+
+		//	Load HeadSize
+		INT nWidth1, nWidth2;
+		m_listCtrl.SetColumnWidth(0, LVSCW_AUTOSIZE);
+		nWidth1 = m_listCtrl.GetColumnWidth(0);
+		m_listCtrl.SetColumnWidth(0, LVSCW_AUTOSIZE_USEHEADER);
+		nWidth2 = m_listCtrl.GetColumnWidth(0);
+		m_listCtrl.SetColumnWidth(0, max(nWidth1, nWidth2) - 30);
+
+		m_listCtrl.SetColumnWidth(1, LVSCW_AUTOSIZE);
+		nWidth1 = m_listCtrl.GetColumnWidth(0);
+		m_listCtrl.SetColumnWidth(1, LVSCW_AUTOSIZE_USEHEADER);
+		nWidth2 = m_listCtrl.GetColumnWidth(0);
+		m_listCtrl.SetColumnWidth(1, max(nWidth1, nWidth2) - 30);
+
+		CDataBaseProject* pProjectDB = CDataBaseProject::GetInstance();
+
+		CDeviceList* pDeviceList = CDeviceList::GetInstance();
+		const INT nCount = pDeviceList->GetAddressCount(TRUE);
+		for (INT nIndex = 0; nIndex < nCount; nIndex++)
+		{
+			const DWORD dwAddress = pDeviceList->GetAddressByIndex(nIndex, TRUE);
+			CString strAddress;
+			pProjectDB->GetStringAddress(strAddress, dwAddress);
+			m_listCtrl.InsertItem(nIndex, strAddress);
+			m_listCtrl.SetItemData(nIndex, dwAddress);
+		}
+
+		m_listCtrl.LoadHeaderItemInfo();
+	}	
+
+	return TRUE;
+}
+
+
+void CPageConfigNetworkGeneral::OnDestroy()
+{
+	m_listCtrl.SaveHeaderItemInfo();
+
+	CMFCPropertyPage::OnDestroy();
+}
+
+
+void CPageConfigNetworkGeneral::OnLvnItemchangedListNetwork(NMHDR* pNMHDR, LRESULT* pResult)
+{
+	LPNMLISTVIEW pNMLV = reinterpret_cast<LPNMLISTVIEW>(pNMHDR);
+
+	*pResult = 0;
+	
+	POSITION pos = m_listCtrl.GetFirstSelectedItemPosition();
+	const INT nIndex = pos ? m_listCtrl.GetNextSelectedItem(pos) : -1;
+
+	if (1)
+	{
+		const BOOL bEnable = ( -1 != nIndex );
+		GetDlgItem(IDC_BTN_MOD)->EnableWindow(bEnable);
+		GetDlgItem(IDC_BTN_DEL)->EnableWindow(bEnable);
+	}
+
+	if (1)
+	{
+		BOOL bEnable = ( 0 < nIndex );
+		GetDlgItem(IDC_BTN_UP)->EnableWindow(bEnable);
+	}
+	
+	if (1)
+	{
+		BOOL bEnable = (-1 != nIndex) && (nIndex < (m_listCtrl.GetItemCount() - 1));
+		GetDlgItem(IDC_BTN_DOWN)->EnableWindow(bEnable);
+	}
+}
+
+
+void CPageConfigNetworkGeneral::OnLvnEndlabeleditListNetwork(NMHDR* pNMHDR, LRESULT* pResult)
+{
+	NMLVDISPINFO* pDispInfo = reinterpret_cast<NMLVDISPINFO*>(pNMHDR);
+
+	*pResult = 0;
+
+	CString strTemp(pDispInfo->item.pszText);
+	CDataBaseProject* pProject = CDataBaseProject::GetInstance();
+	const DWORD dwAddress = pProject->StringToAddress(strTemp);
+
+	POSITION pos = m_listCtrl.GetFirstSelectedItemPosition();
+	const INT nIndex = m_listCtrl.GetNextSelectedItem(pos);
+
+	BOOL bValid = TRUE;
+
+	if (0 == (dwAddress & 0xff000000) ||
+		0 == (dwAddress & 0x000000ff) )
+	{
+		//	1. Check valid address
+		bValid = FALSE;
+	}
+	else
+	{
+		const INT nItemCount = m_listCtrl.GetItemCount();
+		for (INT nSearchIndex = 0; nSearchIndex < nItemCount; nSearchIndex++)
+		{
+			if (nIndex == nSearchIndex)
+			{
+				continue;
+			}
+
+			if( m_listCtrl.GetItemData(nSearchIndex) == dwAddress  )
+			{
+				//	2. Check already used address
+				bValid = FALSE;
+			}
+		}
+	}
+
+	if (bValid && FALSE == m_bEsc)
+	{
+		pProject->GetStringAddress(strTemp, dwAddress);
+		m_listCtrl.SetItemText(nIndex, 0, strTemp);
+		m_listCtrl.SetItemData(nIndex, dwAddress);
+	}
+	else
+	{
+		strTemp = m_listCtrl.GetItemText(nIndex, 0);
+		strTemp.Trim();
+		if (strTemp.IsEmpty())
+		{
+			m_listCtrl.DeleteItem(nIndex);
+		}
+	}
+
+	m_listCtrl.ModifyStyle(LVS_EDITLABELS, 0);
+}
+
+void CPageConfigNetworkGeneral::OnBnClickedBtnAdd()
+{
+	const INT nItemIndex = m_listCtrl.InsertItem(m_listCtrl.GetItemCount(), _T(""));
+	m_listCtrl.SelectSingleItem(nItemIndex);
+	m_listCtrl.ModifyStyle(0, LVS_EDITLABELS);
+	m_listCtrl.SetFocus();
+	m_listCtrl.EditLabel(nItemIndex);
+}
+
+
+BOOL CPageConfigNetworkGeneral::PreTranslateMessage(MSG* pMsg)
+{
+	switch( pMsg->message)
+	{
+	case WM_KEYDOWN:
+	{
+		m_bEsc = FALSE;
+
+		switch (pMsg->wParam)
+		{
+		case VK_RETURN:
+		{
+			CWnd* pWnd = GetFocus();
+
+			if (1 == pWnd->GetDlgCtrlID())
+			{
+				switch (pWnd->GetParent()->GetDlgCtrlID())
+				{
+				case IDC_LIST_NETWORK:
+				{
+					m_listCtrl.SetFocus();
+					return TRUE;
+				}	break;
+				}
+				
+			}
+		}	break;
+
+		case VK_ESCAPE:
+		{
+			m_bEsc = TRUE;
+		}	break;
+		}
+	}	break;
+	}
+
+	return CMFCPropertyPage::PreTranslateMessage(pMsg);
+}
+
+
+void CPageConfigNetworkGeneral::OnBnClickedBtnMod()
+{
+	POSITION pos = m_listCtrl.GetFirstSelectedItemPosition();
+	const INT nIndex = m_listCtrl.GetNextSelectedItem(pos);
+	m_listCtrl.SetFocus();
+	m_listCtrl.ModifyStyle(0, LVS_EDITLABELS);
+	m_listCtrl.EditLabel(nIndex);
+}
+
+
+void CPageConfigNetworkGeneral::OnBnClickedBtnDel()
+{
+	//	Check to delete
+
+	POSITION pos = m_listCtrl.GetFirstSelectedItemPosition();
+	const INT nIndex = m_listCtrl.GetNextSelectedItem(pos);
+	m_listCtrl.DeleteItem(nIndex);
+}
+
+
+void CPageConfigNetworkGeneral::OnOK()
+{
+	//	Change Address
+	CDeviceList* pDeviceList = CDeviceList::GetInstance();
+	pDeviceList->ResetAddressIndex();
+
+	const INT nCount = m_listCtrl.GetItemCount();
+	for (INT nIndex = 0; nIndex < nCount; nIndex++)
+	{
+		pDeviceList->AddAddress(nIndex, m_listCtrl.GetItemData(nIndex) );
+	}
+
+	pDeviceList->RebuildAddressIndex( TRUE );
+
+	CMFCPropertyPage::OnOK();
+}
+
+
+void CPageConfigNetworkGeneral::OnBnClickedBtnUp()
+{
+	POSITION pos = m_listCtrl.GetFirstSelectedItemPosition();
+	const INT nIndex = m_listCtrl.GetNextSelectedItem(pos);
+	
+	ExchangeItemData(nIndex, nIndex - 1);
+}
+
+void CPageConfigNetworkGeneral::OnBnClickedBtnDown()
+{
+	POSITION pos = m_listCtrl.GetFirstSelectedItemPosition();
+	const INT nIndex = m_listCtrl.GetNextSelectedItem(pos);
+	const INT nTempIndex = nIndex - 1;
+
+	ExchangeItemData(nIndex, nIndex + 1);
+}
+
+void CPageConfigNetworkGeneral::ExchangeItemData(const INT nIdxItem1, const INT nIdxItem2)
+{
+	CString strItem1 = m_listCtrl.GetItemText(nIdxItem1, 0);
+	const DWORD dwItem1 = m_listCtrl.GetItemData(nIdxItem1);
+
+	CString strItem2 = m_listCtrl.GetItemText(nIdxItem2, 0);
+	const DWORD dwItem2 = m_listCtrl.GetItemData(nIdxItem2);
+
+	m_listCtrl.SetItemText(nIdxItem1, 0, strItem2);
+	m_listCtrl.SetItemData(nIdxItem1, dwItem2);
+
+	m_listCtrl.SetItemText(nIdxItem2, 0, strItem1);
+	m_listCtrl.SetItemData(nIdxItem2, dwItem1);
+
+	m_listCtrl.SelectSingleItem(nIdxItem2);
+}

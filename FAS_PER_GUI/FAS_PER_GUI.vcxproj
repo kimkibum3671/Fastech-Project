@@ -1,0 +1,544 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>16.0</VCProjectVersion>
+    <ProjectGuid>{B357C3E8-B037-466D-90C7-5402635E3EEF}</ProjectGuid>
+    <Keyword>MFCProj</Keyword>
+    <RootNamespace>FASPERGUI</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+    <UseOfMfc>Static</UseOfMfc>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+    <UseOfMfc>Static</UseOfMfc>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+    <UseOfMfc>Static</UseOfMfc>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+    <UseOfMfc>Static</UseOfMfc>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+    <OutDir>$(SolutionDir)bin\$(Configuration)\</OutDir>
+    <IntDir>bin\$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+    <OutDir>$(SolutionDir)bin\$(Configuration)\</OutDir>
+    <IntDir>bin\$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>__FAS_NAMESPACE;WIN32;_WINDOWS;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+    </Link>
+    <Midl>
+      <MkTypLibCompatible>false</MkTypLibCompatible>
+      <ValidateAllParameters>true</ValidateAllParameters>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </Midl>
+    <ResourceCompile>
+      <Culture>0x0412</Culture>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>__FAS_NAMESPACE;_WINDOWS;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+    </Link>
+    <Midl>
+      <MkTypLibCompatible>false</MkTypLibCompatible>
+      <ValidateAllParameters>true</ValidateAllParameters>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </Midl>
+    <ResourceCompile>
+      <Culture>0x0412</Culture>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Manifest>
+      <EnableDpiAwareness>PerMonitorHighDPIAware</EnableDpiAwareness>
+    </Manifest>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>__FAS_NAMESPACE;WIN32;_WINDOWS;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+    <Midl>
+      <MkTypLibCompatible>false</MkTypLibCompatible>
+      <ValidateAllParameters>true</ValidateAllParameters>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </Midl>
+    <ResourceCompile>
+      <Culture>0x0412</Culture>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>__FAS_NAMESPACE;_WINDOWS;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+    <Midl>
+      <MkTypLibCompatible>false</MkTypLibCompatible>
+      <ValidateAllParameters>true</ValidateAllParameters>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </Midl>
+    <ResourceCompile>
+      <Culture>0x0412</Culture>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Manifest>
+      <EnableDpiAwareness>PerMonitorHighDPIAware</EnableDpiAwareness>
+    </Manifest>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="CButtonEx.h" />
+    <ClInclude Include="CDataBaseManager.h" />
+    <ClInclude Include="CDeviceList.h" />
+    <ClInclude Include="CDeviceMotionGate.h" />
+    <ClInclude Include="CDlgDevice.h" />
+    <ClInclude Include="CDlgDeviceEditor.h" />
+    <ClInclude Include="CDlgDeviceList.h" />
+    <ClInclude Include="CDlgDeviceTotalConfiguration.h" />
+    <ClInclude Include="CDlgHomingControlPanel.h" />
+    <ClInclude Include="CDlgManageBackup.h" />
+    <ClInclude Include="CDlgNamingAssistant.h" />
+    <ClInclude Include="CDlgNetworkSearch.h" />
+    <ClInclude Include="CDlgNoticeSystem.h" />
+    <ClInclude Include="CDlgRename.h" />
+    <ClInclude Include="CDlgRestorationAlarm.h" />
+    <ClInclude Include="CDlgRestoreHomingAlarm.h" />
+    <ClInclude Include="CDlgSaveLogData.h" />
+    <ClInclude Include="CDlgSystemBackup.h" />
+    <ClInclude Include="CDlgSystemHistory.h" />
+    <ClInclude Include="CDlgSystemManage.h" />
+    <ClInclude Include="CDlgSystemOption.h" />
+    <ClInclude Include="CDlgSystemPassword.h" />
+    <ClInclude Include="CDocDevice.h" />
+    <ClInclude Include="CInterface.h" />
+    <ClInclude Include="CInterfaceManager.h" />
+    <ClInclude Include="CInterfaceSerial.h" />
+    <ClInclude Include="CInterfaceSocket.h" />
+    <ClInclude Include="ClientSocket.h" />
+    <ClInclude Include="CMFCButtonEx.h" />
+    <ClInclude Include="CMFCCaptionBarEx.h" />
+    <ClInclude Include="CMFCListCtrlEX.h" />
+    <ClInclude Include="CMFCPropertyPageEx.h" />
+    <ClInclude Include="CDlgMotionGateInform.h" />
+    <ClInclude Include="CDlgMotionGateManager.h" />
+    <ClInclude Include="CModbusAcceptedClient.h" />
+    <ClInclude Include="CModbusServer.h" />
+    <ClInclude Include="COutlookDevice.h" />
+    <ClInclude Include="CPageAssignConfirm.h" />
+    <ClInclude Include="CPageAssignSelect.h" />
+    <ClInclude Include="CPageConfig.h" />
+    <ClInclude Include="CPageConfigDeviceAddress.h" />
+    <ClInclude Include="CPageConfigDeviceDatabase.h" />
+    <ClInclude Include="CPageConfigDeviceInterface.h" />
+    <ClInclude Include="CPageConfigDeviceImage.h" />
+    <ClInclude Include="CPageConfigDeviceLifeCount.h" />
+    <ClInclude Include="CPageConfigDeviceMotor.h" />
+    <ClInclude Include="CPageConfigDeviceOrigin.h" />
+    <ClInclude Include="CPageConfigDeviceControlAuthorize.h" />
+    <ClInclude Include="CPageConfigDevicePLC.h" />
+    <ClInclude Include="CPageConfigDeviceSerial.h" />
+    <ClInclude Include="CPageConfigDeviceSocket.h" />
+    <ClInclude Include="CPageConfigDeviceTest.h" />
+    <ClInclude Include="CPageConfigNetworkGeneral.h" />
+    <ClInclude Include="CPageConfigProjectManagement.h" />
+    <ClInclude Include="CPageConfigUserList.h" />
+    <ClInclude Include="CPageLoginGroup.h" />
+    <ClInclude Include="CPageLoginPassword.h" />
+    <ClInclude Include="CPageLoginUserID.h" />
+    <ClInclude Include="CPageRestorationCompare.h" />
+    <ClInclude Include="CPageRestorationRead.h" />
+    <ClInclude Include="CPageRestorationSelect.h" />
+    <ClInclude Include="CPageRestorationSelectedMethod.h" />
+    <ClInclude Include="CSheetAssignID.h" />
+    <ClInclude Include="CSheetBackup.h" />
+    <ClInclude Include="CMFCPropertySheetEx.h" />
+    <ClInclude Include="CSheetConfig.h" />
+    <ClInclude Include="CSheetConfigDevice.h" />
+    <ClInclude Include="CSheetConfigDeviceSingle.h" />
+    <ClInclude Include="CSheetFactoryReset.h" />
+    <ClInclude Include="CSheetLogin.h" />
+    <ClInclude Include="CSheetRestoration.h" />
+    <ClInclude Include="CMFCRibbonBarEx.h" />
+    <ClInclude Include="CMonitoringManager.h" />
+    <ClInclude Include="CMultiDocTemplateEx.h" />
+    <ClInclude Include="ColorStaticST.h" />
+    <ClInclude Include="CPageBackup.h" />
+    <ClInclude Include="CPageFactoryResetConfirm.h" />
+    <ClInclude Include="CPageFactoryResetSelect.h" />
+    <ClInclude Include="CPageProject.h" />
+    <ClInclude Include="CPageRestorationConfirm.h" />
+    <ClInclude Include="CPageRestorationMethod.h" />
+    <ClInclude Include="CPaneDeviceInfo.h" />
+    <ClInclude Include="CPaneOperationLOG.h" />
+    <ClInclude Include="CSheetSelectRestoration.h" />
+    <ClInclude Include="CStaticImageViewer.h" />
+    <ClInclude Include="CStaticSignalDisplay.h" />
+    <ClInclude Include="CStaticSignalDisplayForm.h" />
+    <ClInclude Include="CStaticSignalDisplayGlobalForm.h" />
+    <ClInclude Include="CViewAssign.h" />
+    <ClInclude Include="CViewBackup.h" />
+    <ClInclude Include="CViewDevice.h" />
+    <ClInclude Include="CViewDeviceConfig.h" />
+    <ClInclude Include="CViewFactoryReset.h" />
+    <ClInclude Include="CDlgHoming.h" />
+    <ClInclude Include="CDlgMotionTest.h" />
+    <ClInclude Include="CViewRestoration.h" />
+    <ClInclude Include="CDlgSchedule.h" />
+    <ClInclude Include="Define_Message.h" />
+    <ClInclude Include="FAS_PER_GUI.h" />
+    <ClInclude Include="framework.h" />
+    <ClInclude Include="MainFrm.h" />
+    <ClInclude Include="pch.h" />
+    <ClInclude Include="ReferD.h" />
+    <ClInclude Include="Resource.h" />
+    <ClInclude Include="targetver.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="CButtonEx.cpp" />
+    <ClCompile Include="CDataBaseManager.cpp" />
+    <ClCompile Include="CDeviceList.cpp" />
+    <ClCompile Include="CDeviceMotionGate.cpp" />
+    <ClCompile Include="CDlgDevice.cpp" />
+    <ClCompile Include="CDlgDeviceEditor.cpp" />
+    <ClCompile Include="CDlgDeviceList.cpp" />
+    <ClCompile Include="CDlgDeviceTotalConfiguration.cpp" />
+    <ClCompile Include="CDlgHomingControlPanel.cpp" />
+    <ClCompile Include="CDlgManageBackup.cpp" />
+    <ClCompile Include="CDlgNamingAssistant.cpp" />
+    <ClCompile Include="CDlgNetworkSearch.cpp" />
+    <ClCompile Include="CDlgNoticeSystem.cpp" />
+    <ClCompile Include="CDlgRename.cpp" />
+    <ClCompile Include="CDlgRestorationAlarm.cpp" />
+    <ClCompile Include="CDlgRestoreHomingAlarm.cpp" />
+    <ClCompile Include="CDlgSaveLogData.cpp" />
+    <ClCompile Include="CDlgSystemBackup.cpp" />
+    <ClCompile Include="CDlgSystemHistory.cpp" />
+    <ClCompile Include="CDlgSystemManage.cpp" />
+    <ClCompile Include="CDlgSystemOption.cpp" />
+    <ClCompile Include="CDlgSystemPassword.cpp" />
+    <ClCompile Include="CDocDevice.cpp" />
+    <ClCompile Include="CInterface.cpp" />
+    <ClCompile Include="CInterfaceManager.cpp" />
+    <ClCompile Include="CInterfaceSerial.cpp" />
+    <ClCompile Include="CInterfaceSocket.cpp" />
+    <ClCompile Include="ClientSocket.cpp" />
+    <ClCompile Include="CMFCButtonEx.cpp" />
+    <ClCompile Include="CMFCCaptionBarEx.cpp" />
+    <ClCompile Include="CMFCListCtrlEX.cpp" />
+    <ClCompile Include="CMFCPropertyPageEx.cpp" />
+    <ClCompile Include="CDlgMotionGateInform.cpp" />
+    <ClCompile Include="CDlgMotionGateManager.cpp" />
+    <ClCompile Include="CModbusAcceptedClient.cpp" />
+    <ClCompile Include="CModbusServer.cpp" />
+    <ClCompile Include="COutlookDevice.cpp" />
+    <ClCompile Include="CPageAssignConfirm.cpp" />
+    <ClCompile Include="CPageAssignSelect.cpp" />
+    <ClCompile Include="CPageConfig.cpp" />
+    <ClCompile Include="CPageConfigDeviceAddress.cpp" />
+    <ClCompile Include="CPageConfigDeviceDatabase.cpp" />
+    <ClCompile Include="CPageConfigDeviceInterface.cpp" />
+    <ClCompile Include="CPageConfigDeviceImage.cpp" />
+    <ClCompile Include="CPageConfigDeviceLifeCount.cpp" />
+    <ClCompile Include="CPageConfigDeviceMotor.cpp" />
+    <ClCompile Include="CPageConfigDeviceOrigin.cpp" />
+    <ClCompile Include="CPageConfigDeviceControlAuthorize.cpp" />
+    <ClCompile Include="CPageConfigDevicePLC.cpp" />
+    <ClCompile Include="CPageConfigDeviceSerial.cpp" />
+    <ClCompile Include="CPageConfigDeviceSocket.cpp" />
+    <ClCompile Include="CPageConfigDeviceTest.cpp" />
+    <ClCompile Include="CPageConfigNetworkGeneral.cpp" />
+    <ClCompile Include="CPageConfigProjectManagement.cpp" />
+    <ClCompile Include="CPageConfigUserList.cpp" />
+    <ClCompile Include="CPageLoginGroup.cpp" />
+    <ClCompile Include="CPageLoginPassword.cpp" />
+    <ClCompile Include="CPageLoginUserID.cpp" />
+    <ClCompile Include="CPageRestorationCompare.cpp" />
+    <ClCompile Include="CPageRestorationRead.cpp" />
+    <ClCompile Include="CPageRestorationSelect.cpp" />
+    <ClCompile Include="CPageRestorationSelectedMethod.cpp" />
+    <ClCompile Include="CSheetAssignID.cpp" />
+    <ClCompile Include="CSheetBackup.cpp" />
+    <ClCompile Include="CMFCPropertySheetEx.cpp" />
+    <ClCompile Include="CSheetConfig.cpp" />
+    <ClCompile Include="CSheetConfigDevice.cpp" />
+    <ClCompile Include="CSheetConfigDeviceSingle.cpp" />
+    <ClCompile Include="CSheetFactoryReset.cpp" />
+    <ClCompile Include="CSheetLogin.cpp" />
+    <ClCompile Include="CSheetRestoration.cpp" />
+    <ClCompile Include="CMFCRibbonBarEx.cpp" />
+    <ClCompile Include="CMonitoringManager.cpp" />
+    <ClCompile Include="CMultiDocTemplateEx.cpp" />
+    <ClCompile Include="ColorStaticST.cpp" />
+    <ClCompile Include="CPageBackup.cpp" />
+    <ClCompile Include="CPageFactoryResetConfirm.cpp" />
+    <ClCompile Include="CPageFactoryResetSelect.cpp" />
+    <ClCompile Include="CPageProject.cpp" />
+    <ClCompile Include="CPageRestorationConfirm.cpp" />
+    <ClCompile Include="CPageRestorationMethod.cpp" />
+    <ClCompile Include="CPaneDeviceInfo.cpp" />
+    <ClCompile Include="CPaneOperationLOG.cpp" />
+    <ClCompile Include="CSheetSelectRestoration.cpp" />
+    <ClCompile Include="CStaticImageViewer.cpp" />
+    <ClCompile Include="CStaticSignalDisplay.cpp" />
+    <ClCompile Include="CStaticSignalDisplayForm.cpp" />
+    <ClCompile Include="CStaticSignalDisplayGlobalForm.cpp" />
+    <ClCompile Include="CViewAssign.cpp" />
+    <ClCompile Include="CViewBackup.cpp" />
+    <ClCompile Include="CViewDevice.cpp" />
+    <ClCompile Include="CViewDeviceConfig.cpp" />
+    <ClCompile Include="CViewFactoryReset.cpp" />
+    <ClCompile Include="CDlgHoming.cpp" />
+    <ClCompile Include="CDlgMotionTest.cpp" />
+    <ClCompile Include="CViewRestoration.cpp" />
+    <ClCompile Include="CDlgSchedule.cpp" />
+    <ClCompile Include="FAS_PER_GUI.cpp" />
+    <ClCompile Include="MainFrm.cpp" />
+    <ClCompile Include="pch.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="FASPERGUI.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="C:\Users\이석\Desktop\homing_off.png" />
+    <Image Include="C:\Users\이석\Desktop\homing_on.png" />
+    <Image Include="C:\Users\이석\Desktop\map0_off.png" />
+    <Image Include="C:\Users\이석\Desktop\map0_on.png" />
+    <Image Include="C:\Users\이석\Desktop\map0_pff.png" />
+    <Image Include="C:\Users\이석\Desktop\map1_off.png" />
+    <Image Include="C:\Users\이석\Desktop\map1_on.png" />
+    <Image Include="C:\Users\이석\Desktop\map2_off.png" />
+    <Image Include="C:\Users\이석\Desktop\map2_on.png" />
+    <Image Include="res\back.png" />
+    <Image Include="res\Backup32.bmp" />
+    <Image Include="res\BackupManage.ico" />
+    <Image Include="res\bitmap1.bmp" />
+    <Image Include="res\bitmap12.bmp" />
+    <Image Include="res\bitmap2.bmp" />
+    <Image Include="res\bitmap3.bmp" />
+    <Image Include="res\bitmap4.bmp" />
+    <Image Include="res\bitmap5.bmp" />
+    <Image Include="res\bitmap6.bmp" />
+    <Image Include="res\bitmap7.bmp" />
+    <Image Include="res\bitmap8.bmp" />
+    <Image Include="res\bitmap_d.bmp" />
+    <Image Include="res\bmp00001.bmp" />
+    <Image Include="res\bmp00002.bmp" />
+    <Image Include="res\bmp00003.bmp" />
+    <Image Include="res\bmp00004.bmp" />
+    <Image Include="res\bmp00005.bmp" />
+    <Image Include="res\btn_restoration_method1_on.bmp" />
+    <Image Include="res\btn_restoration_method_on.bmp" />
+    <Image Include="res\btn_sel_restore_method1.bmp" />
+    <Image Include="res\btn_sel_restore_method1_OFF.bmp" />
+    <Image Include="res\btn_sel_restore_method_OFF.bmp" />
+    <Image Include="res\buttons.bmp" />
+    <Image Include="res\check.bmp" />
+    <Image Include="res\close.png" />
+    <Image Include="res\DeviceStatus.bmp" />
+    <Image Include="res\device_h.bmp" />
+    <Image Include="res\FAS_PER_GUI.ico" />
+    <Image Include="res\FAS_PER_GUIDoc.ico" />
+    <Image Include="res\filelarge.bmp" />
+    <Image Include="res\filesmall.bmp" />
+    <Image Include="res\FlagOn.bmp" />
+    <Image Include="res\flag_off.bmp" />
+    <Image Include="res\flag_small_off.bmp" />
+    <Image Include="res\flag_small_on.bmp" />
+    <Image Include="res\flag_status.bmp" />
+    <Image Include="res\homing_off.png" />
+    <Image Include="res\homing_on.png" />
+    <Image Include="res\icon1.ico" />
+    <Image Include="res\icon2.ico" />
+    <Image Include="res\icon3.ico" />
+    <Image Include="res\Icons32.bmp" />
+    <Image Include="res\Login.bmp" />
+    <Image Include="res\Login.png" />
+    <Image Include="res\main.bmp" />
+    <Image Include="res\map0_off.png" />
+    <Image Include="res\map0_on.png" />
+    <Image Include="res\map1_off.png" />
+    <Image Include="res\map1_on.png" />
+    <Image Include="res\map2_off.png" />
+    <Image Include="res\map2_on.png" />
+    <Image Include="res\NetworkSearching.bmp" />
+    <Image Include="res\next.png" />
+    <Image Include="res\pages_large_hc.bmp" />
+    <Image Include="res\page_small_hc.bmp" />
+    <Image Include="res\Panel_Large.bmp" />
+    <Image Include="res\Panel_Large.png" />
+    <Image Include="res\Restoration0_.bmp" />
+    <Image Include="res\Restoration1.bmp" />
+    <Image Include="res\Restoration2.bmp" />
+    <Image Include="res\Restoration32_.bmp" />
+    <Image Include="res\sheet32_.bmp" />
+    <Image Include="res\sheet32_Resoration1.bmp" />
+    <Image Include="res\start.png" />
+    <Image Include="res\Toolbar.bmp" />
+    <Image Include="res\toolbar1.bmp" />
+    <Image Include="res\toolbar2.bmp" />
+    <Image Include="res\Toolbar256.bmp" />
+    <Image Include="res\ToolbarDeviceList.bmp" />
+    <Image Include="res\ToolbarLog.bmp" />
+    <Image Include="res\Toolbar\all3.bmp" />
+    <Image Include="res\Toolbar\error.bmp" />
+    <Image Include="res\Toolbar\finger.bmp" />
+    <Image Include="res\Toolbar\ip.bmp" />
+    <Image Include="res\Toolbar\list_1.bmp" />
+    <Image Include="res\Toolbar\list_2.bmp" />
+    <Image Include="res\Toolbar\list_3.bmp" />
+    <Image Include="res\Toolbar\Log.bmp" />
+    <Image Include="res\Toolbar\merge.bmp" />
+    <Image Include="res\Toolbar\motor.bmp" />
+    <Image Include="res\Toolbar\select-all.bmp" />
+    <Image Include="res\Toolbar\select.bmp" />
+    <Image Include="res\Toolbar\select2.bmp" />
+    <Image Include="res\Toolbar\timing-belt.bmp" />
+    <Image Include="res\Toolbar\warning.bmp" />
+    <Image Include="res\Toolbar\warning2.bmp" />
+    <Image Include="res\Toolbar\_all.bmp" />
+    <Image Include="res\TotalConfig\Backup Schedule.png" />
+    <Image Include="res\TotalConfig\BackupManage.ico" />
+    <Image Include="res\TotalConfig\Config.bmp" />
+    <Image Include="res\TotalConfig\Config.ico" />
+    <Image Include="res\TotalConfig\Config.png" />
+    <Image Include="res\TotalConfig\down_direction.bmp" />
+    <Image Include="res\TotalConfig\Homing.bmp.bmp" />
+    <Image Include="res\TotalConfig\Homing.png" />
+    <Image Include="res\TotalConfig\homing_done.bmp" />
+    <Image Include="res\TotalConfig\homing_fail.bmp" />
+    <Image Include="res\TotalConfig\homing_progress.bmp" />
+    <Image Include="res\TotalConfig\homing_ready.bmp" />
+    <Image Include="res\TotalConfig\password.bmp" />
+    <Image Include="res\TotalConfig\Schedule.ico" />
+    <Image Include="res\TotalConfig\switch_off.bmp" />
+    <Image Include="res\TotalConfig\switch_on.bmp" />
+    <Image Include="res\TotalConfig\System_BackupManage.ico" />
+    <Image Include="res\TotalConfig\System_BatchBackup.ico" />
+    <Image Include="res\TotalConfig\System_Compare.ico" />
+    <Image Include="res\TotalConfig\System_History.ico" />
+    <Image Include="res\Tree.bmp" />
+    <Image Include="res\Uncheck.bmp" />
+    <Image Include="res\Warning.ico" />
+    <Image Include="res\writelarge.bmp" />
+    <Image Include="res\writesmall.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="resource.hm" />
+    <None Include="res\FASPERGUI.rc2" />
+    <None Include="res\ribbon.mfcribbon-ms" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

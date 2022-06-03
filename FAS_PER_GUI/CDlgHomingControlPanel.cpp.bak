@@ -1,0 +1,883 @@
+﻿// CDlgHomingControlPanel.cpp: 구현 파일
+//
+
+#include "pch.h"
+#include "afxdialogex.h"
+#include "FAS_PER_GUI.h"
+#include "CDlgHomingControlPanel.h"
+
+
+// CDlgHomingControlPanel 대화 상자
+
+IMPLEMENT_DYNAMIC(CDlgHomingControlPanel, CDialogEx)
+
+CDlgHomingControlPanel::CDlgHomingControlPanel(CWnd* pParent /*=nullptr*/)
+	: CDialogEx(IDD_SYSTEM_HOMING, pParent)
+{
+	m_pDevice = NULL;
+	m_nSelectedNumber = -1;
+	m_stMotor[8] = { 0, };
+}
+
+CDlgHomingControlPanel::~CDlgHomingControlPanel()
+{
+	CloseHomingMotion();
+}
+
+
+
+void CDlgHomingControlPanel::DoDataExchange(CDataExchange* pDX)
+{
+	CDialogEx::DoDataExchange(pDX);
+}
+
+
+BEGIN_MESSAGE_MAP(CDlgHomingControlPanel, CDialogEx)
+	ON_BN_CLICKED(IDC_MFCBUTTON_ALARM_RST, &CDlgHomingControlPanel::OnBnClickedMfcbuttonAlarmRst)
+	ON_WM_TIMER()
+	
+	ON_BN_CLICKED(IDC_MFCBUTTON_MOTOR1, &CDlgHomingControlPanel::OnBnClickedMfcbuttonMotor1)
+	ON_BN_CLICKED(IDC_MFCBUTTON_MOTOR2, &CDlgHomingControlPanel::OnBnClickedMfcbuttonMotor2)
+	ON_BN_CLICKED(IDC_MFCBUTTON_MOTOR3, &CDlgHomingControlPanel::OnBnClickedMfcbuttonMotor3)
+	ON_BN_CLICKED(IDC_MFCBUTTON_MOTOR4, &CDlgHomingControlPanel::OnBnClickedMfcbuttonMotor4)
+	ON_BN_CLICKED(IDC_MFCBUTTON_MOTOR5, &CDlgHomingControlPanel::OnBnClickedMfcbuttonMotor5)
+	ON_BN_CLICKED(IDC_MFCBUTTON_MOTOR6, &CDlgHomingControlPanel::OnBnClickedMfcbuttonMotor6)
+	ON_BN_CLICKED(IDC_MFCBUTTON_MOTOR7, &CDlgHomingControlPanel::OnBnClickedMfcbuttonMotor7)
+	ON_BN_CLICKED(IDC_MFCBUTTON_MOTOR8, &CDlgHomingControlPanel::OnBnClickedMfcbuttonMotor8)
+	ON_BN_CLICKED(IDC_MFCBUTTON_CLOSE, &CDlgHomingControlPanel::OnBnClickedMfcbuttonClose)
+	ON_BN_CLICKED(IDC_MFCBUTTON_ALL_START, &CDlgHomingControlPanel::OnBnClickedMfcbuttonAllStart)
+	ON_BN_CLICKED(IDC_MFCBUTTON_STOP_ALL, &CDlgHomingControlPanel::OnBnClickedMfcbuttonStopAll)
+END_MESSAGE_MAP()
+
+
+// CDlgHomingControlPanel 메시지 처리기
+
+void CDlgHomingControlPanel::OnBnClickedMfcbuttonClose()
+{
+	if (TRUE == AskClose())
+	{
+		for (INT nAxis = 1; nAxis < 9; nAxis++)
+		{
+			if (m_pDevice->IsHoming(nAxis))
+			{
+				m_pDevice->MoveStop(nAxis);
+			}
+		}
+
+		OnOK();
+	}
+}
+
+void CDlgHomingControlPanel::SetMotionGate(CDeviceMotionGate* pDevice)
+{
+	m_pDevice = pDevice;
+}
+
+BOOL CDlgHomingControlPanel::OnInitDialog()
+{
+	CDialogEx::OnInitDialog();
+	
+	//OpenHomingMotion();
+
+	
+
+	SetTimer(TIMER_LOAD_IMAGE, 300, NULL);
+
+	return TRUE;  // return TRUE unless you set the focus to a control
+				  // 예외: OCX 속성 페이지는 FALSE를 반환해야 합니다.
+}
+
+void CDlgHomingControlPanel::InitButtonImage()
+{
+	
+}
+
+
+void CDlgHomingControlPanel::InitStaticImage()
+{
+	CImage Image;
+	HBITMAP hBit;
+	HRESULT hRes;
+
+	CMFCButton* pButton;
+
+	if (TRUE == IsWindowVisible())
+	{
+		for (INT nIndex = 1; nIndex <= 8; nIndex++)
+		{
+			SetMotorStaticImage(nIndex - 1, sts_homing_ready);
+		}
+
+		for (INT nAxis = 0; nAxis < 8; nAxis++)
+		{
+			m_wndColor[nAxis].SubclassDlgItem(IDC_ST_MOTOR1 + nAxis, this);
+		}
+
+		m_wndTotalColor.SubclassDlgItem(IDC_STATIC_STATUS, this);
+
+		m_wndViewer.SubclassDlgItem(IDC_STATIC_SYSTEM_IMAGE, this);
+		m_wndViewer.LoadMainImage(m_pDevice->GetSystemImage());
+
+		if (1)
+		{
+			hRes = Image.Load(L"res/TotalConfig/Reset.png");
+			if (hRes != S_OK)
+			{
+				ASSERT(0);
+			}
+			hBit = Image.Detach();
+
+			pButton = (CMFCButton*)GetDlgItem(IDC_MFCBUTTON_ALARM_RST);
+			pButton->m_nFlatStyle = CMFCButton::BUTTONSTYLE_3D;
+			pButton->m_bTransparent = TRUE;
+			pButton->m_bDrawFocus = FALSE;
+
+			pButton->SetImage(hBit, TRUE);
+			pButton->SetWindowText(L"Alarm Reset");
+		}
+
+		if (1)
+		{
+			hRes = Image.Load(L"res/TotalConfig/Homing.png");
+			if (hRes != S_OK)
+			{
+				ASSERT(0);
+			}
+			hBit = Image.Detach();
+
+			pButton = (CMFCButton*)GetDlgItem(IDC_MFCBUTTON_ALL_START);
+			pButton->m_nFlatStyle = CMFCButton::BUTTONSTYLE_3D;
+			pButton->m_bTransparent = TRUE;
+			pButton->m_bDrawFocus = FALSE;
+
+			pButton->SetImage(hBit, TRUE);
+			pButton->SetWindowText(L"Start All");
+		}
+
+		if (1)
+		{
+			hRes = Image.Load(L"res/TotalConfig/Homing Stop.png");
+			if (hRes != S_OK)
+			{
+				ASSERT(0);
+			}
+			hBit = Image.Detach();
+
+			pButton = (CMFCButton*)GetDlgItem(IDC_MFCBUTTON_STOP_ALL);
+			pButton->m_nFlatStyle = CMFCButton::BUTTONSTYLE_3D;
+			pButton->m_bTransparent = TRUE;
+			pButton->m_bDrawFocus = FALSE;
+
+			pButton->SetImage(hBit, TRUE);
+			pButton->SetWindowText(L"Stop All");
+		}
+
+		if (1)
+		{
+			hRes = Image.Load(L"res/TotalConfig/Close.png");
+			if (hRes != S_OK)
+			{
+				ASSERT(0);
+			}
+			hBit = Image.Detach();
+
+			pButton = (CMFCButton*)GetDlgItem(IDC_MFCBUTTON_CLOSE);
+			pButton->m_nFlatStyle = CMFCButton::BUTTONSTYLE_3D;
+			pButton->m_bTransparent = TRUE;
+			pButton->m_bDrawFocus = FALSE;
+
+			pButton->SetImage(hBit, TRUE);
+			pButton->SetWindowText(L"Close");
+		}
+	}
+	
+}
+
+
+void CDlgHomingControlPanel::SetMotorStaticImage(INT nIndex, INT nState)
+{
+	// OninitDialog에서 바로 실행시키면 화면 현시가 안된다.
+	CImage image;
+	
+	switch (nState)
+	{
+	case sts_homing_ready:
+	{
+		image.Load(L"res/TotalConfig/homing_ready.bmp");
+	}	break;
+
+	case sts_homing_done:
+	{
+		image.Load(L"res/TotalConfig/homing_done.bmp");
+	}	break;
+
+	case sts_homing_processing:
+	{
+		image.Load(L"res/TotalConfig/homing_progress.bmp");
+	}	break;
+
+	case sts_homing_failed:
+	{
+		image.Load(L"res/TotalConfig/homing_fail.bmp");
+	}	break;
+
+	default:
+		break;
+	}
+	
+	((CStatic*)GetDlgItem(IDC_STATIC_MOTOR1 + nIndex))->SetBitmap(image);
+}
+
+
+
+
+
+void CDlgHomingControlPanel::OnBnClickedMfcbuttonAlarmRst()
+{
+	m_pDevice->AlarmReset();
+	
+	SetTimer(TIMER_ALARM_RST_BUTTON, 500, NULL);
+	
+}
+
+
+void CDlgHomingControlPanel::OnTimer(UINT_PTR nIDEvent)
+{
+	// TODO: 여기에 메시지 처리기 코드를 추가 및/또는 기본값을 호출합니다.
+
+	switch (nIDEvent)
+	{
+	case TIMER_LOAD_IMAGE:
+	{
+		KillTimer(nIDEvent);
+		
+		InitStaticImage();
+		SetTimer(TIMER_MONITOR_BUTTON, 100, NULL);
+	}	break;
+	case TIMER_HOMING_MOTOR1:
+	case TIMER_HOMING_MOTOR2:
+	case TIMER_HOMING_MOTOR3:
+	case TIMER_HOMING_MOTOR4:
+	case TIMER_HOMING_MOTOR5:
+	case TIMER_HOMING_MOTOR6:
+	case TIMER_HOMING_MOTOR7:
+	case TIMER_HOMING_MOTOR8:
+	{
+		HomingRun(nIDEvent);
+	}	break;
+
+	case TIMER_HOMING_TOTAL:
+	{
+		HomingAll();
+	}	break;
+
+	case TIMER_MONITOR_BUTTON:
+	{
+		MonitorBtnStatus();
+	}	break;
+
+	case TIMER_ALARM_RST_BUTTON:
+	{
+		KillTimer(nIDEvent);
+		//MotorAlarmReset();
+	}	break;
+
+	default:
+		break;
+	}
+
+	CDialogEx::OnTimer(nIDEvent);
+}
+
+
+void CDlgHomingControlPanel::HomingRun(INT nMotorIndex)
+{
+	INT nAxis = nMotorIndex + 1;
+	INT nState = 0;
+
+	if (FALSE == m_stMotor[nMotorIndex].bHoming)
+	{
+		nState = sts_homing_ready;
+
+		
+
+ 		m_pDevice->ExecuteOriginSerach(nAxis);
+		
+		m_stMotor[nMotorIndex].nStartWaiting = 0;
+
+		m_stMotor[nMotorIndex].bHoming = TRUE;
+
+		m_stMotor[nMotorIndex].bHomingDone = FALSE;
+		m_stMotor[nMotorIndex].bHomingFail = FALSE;
+		m_stMotor[nMotorIndex].bHomingReady = FALSE;
+		m_stMotor[nMotorIndex].bHomingStop = FALSE;
+
+		OpenHomingMotion();
+	}
+	else
+	{
+		// 두번 이상 실행시 CDeviceMotionGate에서는 이전 마지막 상태값을 가지고 있다.
+		if (m_stMotor[nMotorIndex].nStartWaiting < 15)
+		{
+			m_stMotor[nMotorIndex].nStartWaiting++;
+			return;
+		}
+
+		if (TRUE == m_pDevice->IsHoming(nAxis))
+		{
+			nState = sts_homing_processing;
+		}
+		else
+		{ // Waiting은 이쪽으로 들어온다.
+			if (m_pDevice->IsHomingOK(nAxis))
+			{
+				nState = sts_homing_done;
+				m_stMotor[nMotorIndex].bHomingDone = TRUE;
+			}
+			else if (m_pDevice->IsHomingNG(nAxis))
+			{
+				nState = sts_homing_failed;
+				m_stMotor[nMotorIndex].bHomingFail = TRUE;
+			}
+
+			if (nState == sts_homing_processing)
+			{
+				//m_stMotor[nMotorIndex].bHoming = TRUE;
+			}
+			else if (nState == sts_homing_done ||
+				     nState == sts_homing_failed)
+			{
+				m_stMotor[nMotorIndex].bHoming = FALSE;
+				KillTimer(nMotorIndex);
+
+			}
+		}
+	}
+
+	if (m_stMotor[nMotorIndex].nStatus != nState)
+	{
+		//SetMotorStaticImage(nMotorIndex, nState);
+		m_stMotor[nMotorIndex].nStatus = nState;
+	}
+}
+
+
+
+
+void CDlgHomingControlPanel::SelectedMotorIndex(INT nSelected)
+{
+	m_nSelectedNumber = nSelected;
+}
+
+
+const INT CDlgHomingControlPanel::GetSelectedMotorIndex()
+{
+	return m_nSelectedNumber;
+}
+
+
+void CDlgHomingControlPanel::OnBnClickedMfcbuttonMotor1()
+{
+	if (TRUE == AskHoming())
+	{
+		SelectedMotorIndex(TIMER_HOMING_MOTOR1);
+		SetTimer(GetSelectedMotorIndex(), 100, NULL);
+	}
+}
+
+
+void CDlgHomingControlPanel::OnBnClickedMfcbuttonMotor2()
+{
+	if (TRUE == AskHoming())
+	{
+		SelectedMotorIndex(TIMER_HOMING_MOTOR2);
+		SetTimer(GetSelectedMotorIndex(), 100, NULL);
+	}
+}
+
+
+void CDlgHomingControlPanel::OnBnClickedMfcbuttonMotor3()
+{
+	if (TRUE == AskHoming())
+	{
+		SelectedMotorIndex(TIMER_HOMING_MOTOR3);
+		SetTimer(GetSelectedMotorIndex(), 100, NULL);
+	}
+}
+
+
+void CDlgHomingControlPanel::OnBnClickedMfcbuttonMotor4()
+{
+	if (TRUE == AskHoming())
+	{
+		SelectedMotorIndex(TIMER_HOMING_MOTOR4);
+		SetTimer(GetSelectedMotorIndex(), 100, NULL);
+	}
+}
+
+
+void CDlgHomingControlPanel::OnBnClickedMfcbuttonMotor5()
+{
+	if (TRUE == AskHoming())
+	{
+		SelectedMotorIndex(TIMER_HOMING_MOTOR5);
+		SetTimer(GetSelectedMotorIndex(), 100, NULL);
+	}
+}
+
+
+void CDlgHomingControlPanel::OnBnClickedMfcbuttonMotor6()
+{
+	if (TRUE == AskHoming())
+	{
+		SelectedMotorIndex(TIMER_HOMING_MOTOR6);
+		SetTimer(GetSelectedMotorIndex(), 100, NULL);
+	}
+}
+
+
+void CDlgHomingControlPanel::OnBnClickedMfcbuttonMotor7()
+{
+	if (TRUE == AskHoming())
+	{
+		SelectedMotorIndex(TIMER_HOMING_MOTOR7);
+		SetTimer(GetSelectedMotorIndex(), 100, NULL);
+	}
+}
+
+
+void CDlgHomingControlPanel::OnBnClickedMfcbuttonMotor8()
+{
+	if (TRUE == AskHoming())
+	{
+		SelectedMotorIndex(TIMER_HOMING_MOTOR8);
+		SetTimer(GetSelectedMotorIndex(), 100, NULL);
+	}
+}
+
+
+void CDlgHomingControlPanel::OnBnClickedMfcbuttonAllStart()
+{
+	if (TRUE == AskHomingAllStart())
+	{
+		for (INT nAxis = 1; nAxis < 8; nAxis++)
+		{
+			if (m_pDevice->IsMotorConnected(nAxis))
+			{
+				SetTimer(nAxis - 1, 100, NULL);
+				m_pDevice->ExecuteOriginSerach(nAxis);
+			}
+		}
+
+		SetTimer(TIMER_HOMING_TOTAL, 1000, NULL);
+	}
+}
+
+
+void CDlgHomingControlPanel::OnBnClickedMfcbuttonStopAll()
+{
+	for (INT nAxis = 1; nAxis < 9; nAxis++)
+	{
+		if (m_pDevice->IsHoming(nAxis))
+		{
+			m_pDevice->MoveStop(nAxis);
+		}
+	}
+}
+
+
+void CDlgHomingControlPanel::MonitorBtnStatus()
+{
+	
+	if (TRUE)
+	{// System Homing Check
+		BOOL bHoming = m_pDevice->IsSystemHoming();
+		GetDlgItem(IDC_MFCBUTTON_ALARM_RST)->EnableWindow(!bHoming);
+		GetDlgItem(IDC_MFCBUTTON_ALL_START)->EnableWindow(!bHoming);
+		//GetDlgItem(IDC_MFCBUTTON_CLOSE)->EnableWindow(!bHoming);
+	}
+	
+	for (INT nAxis = 1; nAxis < 9; nAxis++)
+	{
+		BOOL bConnected = m_pDevice->IsMotorConnected(nAxis);
+		
+		BOOL bEnableBtn = (m_stMotor[nAxis - 1].bHoming == FALSE) && (bConnected == TRUE);
+
+		GetDlgItem(IDC_MFCBUTTON_MOTOR1 + (nAxis - 1))->EnableWindow(bEnableBtn);
+
+		GetDlgItem(IDC_ST_MOTOR1 + (nAxis - 1))->EnableWindow(bConnected);
+		
+		SetMotorStaticImage(nAxis - 1, bConnected ? m_stMotor[nAxis - 1].nStatus : sts_homing_ready);
+		if (bConnected)
+		{
+			SetStatusBkColor(nAxis, m_stMotor[nAxis - 1].nStatus);
+		}
+	}
+
+
+	if (1)
+	{
+		BOOL bMotioningCheck = FALSE;
+		for (INT nAxis = 1; nAxis < 9; nAxis++)
+		{ // 하나라도 동작중인 경우 TRUE
+			bMotioningCheck |= m_stMotor[nAxis - 1].bHoming;
+		}
+
+		GetDlgItem(IDC_MFCBUTTON_STOP_ALL)->EnableWindow(bMotioningCheck);
+	}
+}
+
+
+void CDlgHomingControlPanel::SetStatusBkColor(INT nAxis, INT nStatus)
+{
+	CString str;
+	COLORREF bkColor, textColor;
+	COLORREF red, white, yellow, black, blue, none;
+	
+	none = RGB(240, 240, 240);
+	red = RGB(255, 0, 0);
+	white = RGB(255, 255, 255);
+	yellow = RGB(255, 255, 0);
+	black = RGB(0, 0, 0);
+	blue = RGB(75, 137, 220);
+
+	bkColor = none;
+	textColor = black;
+
+	switch (nStatus)
+	{
+	case sts_homing_ready:
+	case sts_homing_failed:
+	{
+		if (m_pDevice->IsMotorAlarmDetected(nAxis))
+		{
+			str.Format(_T("[Motor #%d] Alarm"), nAxis);
+			bkColor = red;
+			textColor = black;
+		}
+		else
+		{ // Alarm이 아닌 다른 이유로 원점탐색 실패할 경우 Ready로 넘어감.
+			str.Format(_T("[Motor #%d] Ready"), nAxis);
+			bkColor = none;
+			textColor = black;
+		}
+	}	break;
+
+	case sts_homing_processing:
+	{
+		str.Format(_T("[Motor #%d] Homing"), nAxis);
+		bkColor = yellow;
+		textColor = black;
+	}	break;
+
+	case sts_homing_done:
+	{
+		str.Format(_T("[Motor #%d] Done"), nAxis);
+		bkColor = blue;
+		textColor = white;
+	}	break;
+	}
+
+	m_wndColor[nAxis - 1].SetWindowText(str);
+	m_wndColor[nAxis - 1].SetBkColor(bkColor);
+	m_wndColor[nAxis - 1].SetTextColor(textColor);
+}
+
+
+void CDlgHomingControlPanel::OpenHomingMotion()
+{
+	m_pDevice->EnableAutoHoming(TRUE);
+}
+
+
+void CDlgHomingControlPanel::CloseHomingMotion()
+{// 모두가 꺼져야 HomingMotion 상태 Close
+	
+	/*
+	BOOL bServoOn = FALSE;
+
+	for (INT nAxis = 1; nAxis < 9; nAxis++)
+	{ // 하나라도 True이면 bHoming은 True.
+		bServoOn |= m_pDevice->IsServoEnabled(nAxis);
+
+		if (nAxis == 8)
+		{
+			if (FALSE == bServoOn)
+			{
+				if (TRUE == m_pDevice->IsAutoHomingEnabled())
+				{
+					m_pDevice->EnableAutoHoming(FALSE); // 모두 정지해 있으면 Homing상태 종료한다.
+				}
+			}
+		}
+	}
+	*/
+	
+	/*
+	BOOL bClose = FALSE;
+
+	for (INT nAxis = 0; nAxis < 8; nAxis++)
+	{
+		switch (m_stMotor[nAxis].nStatus)
+		{
+		case sts_homing_done:
+		case sts_homing_failed:
+		{
+			bClose |= TRUE;
+		}	break;
+
+		default:
+		{
+
+		}	break;
+		}
+	}
+
+	if (bClose)
+	{
+		m_pDevice->EnableAutoHoming(FALSE); // 모두 진행이 완료된 상태일 경우.
+	}
+	*/
+	
+	
+	// 어차피 Homing은 Restoration이 시작되고 선택하는 것이므로, Motion중일리가 없다.
+	m_pDevice->EnableAutoHoming(FALSE); 
+	
+}
+
+
+void CDlgHomingControlPanel::MotorAlarmReset()
+{ 
+	// Motor Alarm Display
+	
+	for (INT nAxis = 0; nAxis < 8; nAxis++)
+	{
+		if (FALSE == m_stMotor[nAxis].bHoming)
+		{ // 정지 상태 일때.
+
+			BOOL bAxisAlarm = m_pDevice->IsMotorAlarmDetected(nAxis + 1);
+			if (TRUE == bAxisAlarm)
+			{ // Alarm 발생했을 경우
+				m_stMotor[nAxis].nStatus = sts_homing_failed;
+			}
+			else
+			{ // Alarm이 없을경우
+				
+			}
+
+			SetStatusBkColor(nAxis + 1, m_stMotor[nAxis].nStatus);
+		}
+	}
+}
+
+
+void CDlgHomingControlPanel::HomingAll()
+{
+	CString str;
+	COLORREF bkColor, textColor;
+	COLORREF red, white, yellow, black, blue, none;
+	
+	BOOL bReady = TRUE;
+	BOOL bDone = TRUE;
+
+	BOOL bHoming = FALSE;
+	BOOL bAlarm = FALSE;
+	BOOL bFailed = FALSE;
+
+	none = RGB(240, 240, 240);
+	red = RGB(255, 0, 0);
+	white = RGB(255, 255, 255);
+	yellow = RGB(255, 255, 0);
+	black = RGB(0, 0, 0);
+	blue = RGB(75, 137, 220);
+
+	bkColor = none;
+	textColor = black;
+	
+	for (INT nAxis = 0; nAxis < 8; nAxis++)
+	{
+		if (m_pDevice->IsMotorConnected(nAxis + 1))
+		{
+			bReady &= (m_stMotor[nAxis].nStatus == sts_homing_ready); // 모두가 준비상태
+			bDone &= (m_stMotor[nAxis].nStatus == sts_homing_done); // 모두가 완료인 상태
+
+			bHoming |= (m_stMotor[nAxis].nStatus == sts_homing_processing); // 한개라도 모션이 진행중일 경우
+			bFailed |= (m_stMotor[nAxis].nStatus == sts_homing_failed); // 한개라도 Failed 될 경우.
+			bAlarm |= (m_pDevice->IsMotorAlarmDetected(nAxis + 1)); // 한개라도 Alarm 발생했을 경우.
+		}
+	}
+
+	if (bReady)
+	{
+		str.Format(_T("Motor all ready."));
+		bkColor = none;
+		textColor = black;
+	}
+
+	if (bHoming)
+	{
+		str.Format(_T("Homing..."));
+		bkColor = yellow;
+		textColor = black;
+	}
+
+	if (bDone)
+	{
+		str.Format(_T("Homing done."));
+		bkColor = blue;
+		textColor = white;
+	}
+
+	if (bFailed)
+	{
+		str.Format(_T("Homing failed."));
+		bkColor = red;
+		textColor = black;
+	}
+
+	if (bAlarm)
+	{
+		str.Format(_T("Homing failed (Alarm dected)."));
+		bkColor = red;
+		textColor = black;
+	}
+
+	m_wndTotalColor.SetWindowText(str);
+	m_wndTotalColor.SetBkColor(bkColor);
+	m_wndTotalColor.SetTextColor(textColor);
+
+	for (INT nAxis = 0; nAxis < 8; nAxis++)
+	{ // 모두가 정지해야만 KillTimer 을 시킨다.
+		if (TRUE == m_stMotor[nAxis].bHoming) return;
+		
+		if (nAxis == 7)
+		{
+			KillTimer(TIMER_HOMING_TOTAL);
+		}
+	}
+}
+
+
+const BOOL CDlgHomingControlPanel::AskHoming()
+{
+	BOOL bResult = FALSE;
+
+	CString message("");
+	CString mainInstruction("Do you want to Homing run?");
+	CString title(_T("Confirm homing execution behavior"));
+
+	CTaskDialog taskDialog(message, mainInstruction, title, !(TDCBF_OK_BUTTON | TDCBF_CANCEL_BUTTON));
+
+	taskDialog.AddCommandControl(IDYES, _T("Yes, I want to Homing run."));
+	taskDialog.AddCommandControl(IDNO, _T("No, I don't want to Homing run."));
+
+	taskDialog.SetDialogWidth(350);
+
+	switch (taskDialog.DoModal())
+	{
+	case IDYES:
+	{
+		bResult = TRUE;
+	}	break;
+
+	case IDNO:
+	{
+		bResult = FALSE;
+	}	break;
+	}
+
+	return bResult;
+}
+
+const BOOL CDlgHomingControlPanel::AskHomingStop()
+{
+	BOOL bResult = FALSE;
+
+	CString message("");
+	CString mainInstruction("the Homing is running. Do you want to homing stop?");
+	CString title(_T("Confirm homing stop behavior"));
+
+	CTaskDialog taskDialog(message, mainInstruction, title, !(TDCBF_OK_BUTTON | TDCBF_CANCEL_BUTTON));
+
+	taskDialog.AddCommandControl(IDYES, _T("Yes, I want to Homing stop."));
+	taskDialog.AddCommandControl(IDNO, _T("No, I don't want to Homing stop."));
+
+	taskDialog.SetDialogWidth(350);
+
+	switch (taskDialog.DoModal())
+	{
+	case IDYES:
+	{
+		bResult = TRUE;
+	}	break;
+
+	case IDNO:
+	{
+		bResult = FALSE;
+	}	break;
+	}
+
+	return bResult;
+}
+
+const BOOL CDlgHomingControlPanel::AskHomingAllStart()
+{
+	BOOL bResult = FALSE;
+
+	CString message("");
+	CString mainInstruction("Do you want to Homing all run?");
+	CString title(_T("Confirm homing execution behavior"));
+
+	CTaskDialog taskDialog(message, mainInstruction, title, !(TDCBF_OK_BUTTON | TDCBF_CANCEL_BUTTON));
+
+	taskDialog.AddCommandControl(IDYES, _T("Yes, I want to Homing all run."));
+	taskDialog.AddCommandControl(IDNO, _T("No, I don't want to Homing all run."));
+
+	taskDialog.SetDialogWidth(350);
+
+	switch (taskDialog.DoModal())
+	{
+	case IDYES:
+	{
+		bResult = TRUE;
+	}	break;
+
+	case IDNO:
+	{
+		bResult = FALSE;
+	}	break;
+	}
+
+	return bResult;
+}
+
+const BOOL CDlgHomingControlPanel::AskClose()
+{
+	BOOL bResult = FALSE;
+
+	CString message("If the motor is running, the screen is closed after stopping.");
+	CString mainInstruction("Are you sure you want to exit the Homing screen?");
+	CString title(_T("Confirm Homing screen exit"));
+
+	CTaskDialog taskDialog(message, mainInstruction, title, !(TDCBF_OK_BUTTON | TDCBF_CANCEL_BUTTON));
+
+	taskDialog.AddCommandControl(IDYES, _T("Yes, I want to exit the Homing screen"));
+	taskDialog.AddCommandControl(IDNO, _T("No, I don't want to exit the Homing screen."));
+
+	taskDialog.SetDialogWidth(350);
+
+	switch (taskDialog.DoModal())
+	{
+	case IDYES:
+	{
+		bResult = TRUE;
+	}	break;
+
+	case IDNO:
+	{
+		bResult = FALSE;
+	}	break;
+	}
+
+	return bResult;
+}

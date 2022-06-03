@@ -1,0 +1,242 @@
+﻿// CPageConfigDevicePLC.cpp: 구현 파일
+//
+
+#include "pch.h"
+#include "FAS_PER_GUI.h"
+#include "CPageConfigDevicePLC.h"
+
+
+// CPageConfigDevicePLC
+
+IMPLEMENT_DYNAMIC(CPageConfigDevicePLC, CMFCPropertyPage)
+
+CPageConfigDevicePLC::CPageConfigDevicePLC(CWnd* pParent)
+	:CMFCPropertyPage(IDP_CONFIG_DEVICE_PLC)
+{
+
+}
+
+CPageConfigDevicePLC::~CPageConfigDevicePLC()
+{
+}
+
+
+BEGIN_MESSAGE_MAP(CPageConfigDevicePLC, CMFCPropertyPage)
+END_MESSAGE_MAP()
+
+
+
+// CPageConfigDevicePLC 메시지 처리기
+
+
+
+
+BOOL CPageConfigDevicePLC::OnCommand(WPARAM wParam, LPARAM lParam)
+{
+	UINT id = (UINT)LOWORD(wParam);
+	ASSERT(GetDlgItem(id));
+
+	switch (id)
+	{
+	case IDC_BUTTON_SAVE:
+	{
+		GetDlgItem(id)->EnableWindow(false);
+		GetDlgItem(id + 1)->EnableWindow(true);
+		SaveIndexData();
+	}	break;
+
+	case IDC_BUTTON_DELETE:
+	{
+		GetDlgItem(id)->EnableWindow(false);
+		GetDlgItem(id - 1)->EnableWindow(true);
+		DeleteIndexData();
+	}	break;
+
+	default:
+		break;
+	}
+	
+
+	return CMFCPropertyPage::OnCommand(wParam, lParam);
+}
+
+
+void CPageConfigDevicePLC::SaveIndexData()
+{
+	CString str;
+	INT nStartIndex = 0;
+	
+	if (1) 
+	{
+		CEdit* pEdit = (CEdit*)GetDlgItemText(IDC_EDIT_INDEX, str);
+		nStartIndex = _ttoi(str);
+	}
+
+	INT nCheck = nStartIndex;
+
+	//for (int nIndex = 0; nIndex < 6; nIndex++)
+	//{
+	//	
+	//	switch (nIndex)
+	//	{
+	//	case 0:
+	//	{
+	//		str.Format(L"INDEX[%d ~ %d] :", nStartIndex, nStartIndex + 1);
+	//	}	break;
+
+	//	case 1:
+	//	{
+	//		str.Format(L"INDEX[%d ~ %d] :", nStartIndex + 2, nStartIndex + 3);
+	//	}	break;
+	//	
+	//	case 2:
+	//	{
+	//		str.Format(L"INDEX[%d] :", nStartIndex + 4);
+	//	}	break;
+
+	//	case 3:
+	//	{
+	//		str.Format(L"INDEX[%d ~ %d] :", nStartIndex + 5, nStartIndex + 6);
+	//	}	break;
+
+	//	case 4:
+	//	{
+	//		str.Format(L"INDEX[%d] :", nStartIndex + 7);
+	//	}	break;
+	//	default:
+	//		break;
+	//	}
+	//	
+	//	
+	//	SetDlgItemText(IDC_STATIC_INFORM0 + nIndex, str); 
+	//}
+
+	str.Format(L"Memory[%d ~ %d] \r\n", nStartIndex, nStartIndex + 12);
+	SetTextData(nStartIndex,str);
+}
+
+
+
+void CPageConfigDevicePLC::DeleteIndexData()
+{
+
+	m_ListCtrl.DeleteAllItems();
+	
+}
+
+
+BOOL CPageConfigDevicePLC::OnInitDialog()
+{
+	CMFCPropertyPage::OnInitDialog();
+
+	CEdit* pEdit = (CEdit*)GetDlgItem(IDC_EDIT_INDEX);
+	if (NULL != pEdit)
+	{
+		pEdit->SetWindowTextW(L"-");
+	}
+	CRect rt;
+	m_ListCtrl.GetWindowRect(&rt);
+	m_ListCtrl.SetExtendedStyle(LVS_EX_GRIDLINES | LVS_EX_FULLROWSELECT); // List 컨트롤에 선표시 및 Item 선택시 한행 전체 선택
+
+	m_ListCtrl.InsertColumn(0, TEXT("INDEX"), LVCFMT_LEFT, rt.Width() * 0.2);
+	m_ListCtrl.InsertColumn(1, TEXT("INFORM"), LVCFMT_LEFT, rt.Width() * 0.7);
+	
+	return TRUE;  // return TRUE unless you set the focus to a control
+				  // 예외: OCX 속성 페이지는 FALSE를 반환해야 합니다.
+}
+
+
+void CPageConfigDevicePLC::DoDataExchange(CDataExchange* pDX)
+{
+	CMFCPropertyPage::DoDataExchange(pDX);
+	DDX_Control(pDX, IDC_RICHEDIT_INDEX, m_edit);
+	DDX_Control(pDX, IDC_LIST_INDEX, m_ListCtrl);
+}
+
+
+const BOOL CPageConfigDevicePLC::SetTextData(INT nStartIndex, CString str, COLORREF crText)
+{
+	if (str == L"") return FALSE;
+
+	COleDateTime dt = COleDateTime::GetCurrentTime();
+	CString strText = dt.Format(L"[%H : %M : %S]");
+	strText += str;
+	
+	if (m_edit.GetSafeHwnd())
+	{
+		CHARFORMAT cf;
+		m_edit.GetDefaultCharFormat(cf);
+		cf.dwMask = CFM_COLOR;
+		cf.dwEffects = NULL;
+		cf.crTextColor = crText;
+		m_edit.SetWordCharFormat(cf);
+		m_edit.SetSel(-1, -1);
+		m_edit.ReplaceSel(str);
+	}
+
+	CString strIndex;
+	int num = m_ListCtrl.GetItemCount();
+	
+
+	CString strInform;
+
+	for (INT nIndex = num; nIndex < num + cmd_max; nIndex++)
+	{
+	
+		switch (nIndex)
+		{
+		case cmd_req_eeno:
+		{
+			strInform.Format(L"[REQ] MotionGate Part No");
+		}	break;
+
+		case cmd_req_pt_mt_no:
+		{
+			strInform.Format(L"[REQ] Position No / Motor No");
+		}	break;
+
+		case cmd_res_eeno:
+		{
+			strInform.Format(L"[RES] MotionGate Part No");
+		}	break;
+
+		case cmd_res_pt_mt_no:
+		{
+			strInform.Format(L"[RES] Position No / Motor No");
+		}	break;
+
+		case cmd_errcode:
+		{
+			strInform.Format(L"Error Code");
+		}	break;
+
+		case cmd_pos_hi:
+		case cmd_pos_lo:
+		{
+			strInform.Format(L"POSITION");
+		}	break;
+
+		case cmd_speed:
+		{
+			strInform.Format(L"Speed");
+		}	break;
+
+		default:
+			break;
+		}
+		strIndex.Format(L"%d", nStartIndex + nIndex);
+
+		m_ListCtrl.InsertItem(num, strIndex);
+		m_ListCtrl.SetItem(num, 1, LVIF_TEXT, strInform, NULL, NULL, NULL, NULL);
+	}
+
+
+	return TRUE;
+}
+
+
+CPageConfigDevicePLC* CPageConfigDevicePLC::GetInstance()
+{
+	static CPageConfigDevicePLC _instance;
+	return &_instance;
+}

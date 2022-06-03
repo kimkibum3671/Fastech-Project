@@ -1,0 +1,7 @@
+﻿  CDlgMotionGateInform.cpp
+D:\SoftwareDevelope\05.GM\FAS_PER\FAS_PER_GUI\CDlgMotionGateInform.cpp(578,10): warning C4101: 'hRes' :참조되지 않은 지역 변수입니다.
+D:\SoftwareDevelope\05.GM\FAS_PER\FAS_PER_GUI\CDlgMotionGateInform.cpp(580,17): warning C4101: 'pButton' :참조되지 않은 지역 변수입니다.
+D:\SoftwareDevelope\05.GM\FAS_PER\FAS_PER_GUI\CDlgMotionGateInform.cpp(577,10): warning C4101: 'hBit' :참조되지 않은 지역 변수입니다.
+D:\SoftwareDevelope\05.GM\FAS_PER\FAS_PER_GUI\CDlgMotionGateInform.cpp(1680,44): warning C4244: '=': 'DWORD'에서 'WORD'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+D:\SoftwareDevelope\05.GM\FAS_PER\FAS_PER_GUI\CDlgMotionGateInform.cpp(2567,20): warning C4244: '*=': 'double'에서 'LONG'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  FAS_PER_GUI.vcxproj -> D:\SoftwareDevelope\05.GM\FAS_PER\bin\Debug\FAS_PER_GUI.exe
